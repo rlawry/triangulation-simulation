@@ -12,6 +12,35 @@
     width: 100vw;
     margin: 0;
     background-color: #f0f0f0; /* Light background for contrast */
+    flex-direction: column;
+  }
+
+  h1 {
+    text-align: center;
+  }
+
+  #buttonContainer {
+    display: flex;
+    justify-content: center;
+    gap: 20px; /* Space between buttons */
+    margin-top: 20px; /* Space between the canvas and buttons */
+    position: relative;
+    top: 260px; /* Move buttons closer to the canvas */
+  }
+  
+  button {
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    border: none;
+    border-radius: 5px;
+    background-color: #007BFF;
+    color: white;
+    transition: background-color 0.3s;
+  }
+  
+  button:hover {
+    background-color: #0056b3;
   }
   
   canvas {

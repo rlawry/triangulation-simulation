@@ -30,9 +30,11 @@ let marsAngularSpeed = (2 * Math.PI) / marsSiderealPeriod * timeScale;
 let earthAngle = 0;
 let marsAngle = 0;
 let daysCounter = 0;  // Days counter for display
+let experimentDays = 0; // Days passed since the first ray cast
 let isPaused = false;  // Start in a running state
 let hasDrawnRay = false; // Flag to check if the first ray has been drawn
 let hasDrawnFinalRay = false; // Flag to check if the final ray has been drawn
+let experimentBegun = false;
 
 // Draw the orbits and the sun on the background canvas
 function drawBackground() {
@@ -53,11 +55,11 @@ function drawBackground() {
   backgroundCtx.stroke();
 
   // Draw Mars' orbit as an ellipse
-  backgroundCtx.beginPath();
-  const marsFocusOffset = marsSemiMajorAxis * marsEccentricity;
-  backgroundCtx.ellipse(sunX - marsFocusOffset, sunY, marsSemiMajorAxis, marsSemiMinorAxis, 0, 0, 2 * Math.PI);
-  backgroundCtx.strokeStyle = 'red';
-  backgroundCtx.stroke();
+  // backgroundCtx.beginPath();
+  // const marsFocusOffset = marsSemiMajorAxis * marsEccentricity;
+  // backgroundCtx.ellipse(sunX - marsFocusOffset, sunY, marsSemiMajorAxis, marsSemiMinorAxis, 0, 0, 2 * Math.PI);
+  // backgroundCtx.strokeStyle = 'red';
+  // backgroundCtx.stroke();
 }
 
 // Calculate Earth's position on its orbit
@@ -108,10 +110,11 @@ function drawConnectingLines(earthPos, marsPos) {
 function displayInfo(heliocentricLongitude, geocentricLongitude) {
   ctx.fillStyle = 'black';
   ctx.font = '16px Arial';
-  ctx.fillText("Press Space to Begin", width - 150, 20); // Display prompt when paused
-  ctx.fillText(`Days Counter: ${daysCounter}`, width - 150, 40); // Upper right corner
-  ctx.fillText(`Heliocentric Longitude (Earth): ${heliocentricLongitude.toFixed(1)}°`, 10, 60); // One decimal place
-  ctx.fillText(`Geocentric Longitude (Mars): ${geocentricLongitude.toFixed(1)}°`, 10, 80); // One decimal place
+  ctx.fillText("Press Space to Begin", width - 180, 20); // Display prompt when paused
+  ctx.fillText(`Days Between Observations: ${daysCounter}`, width - 250, 40); // Upper right corner
+  ctx.fillText(`Experiment Years Elapsed: ${(experimentDays/365.25).toFixed(2)}`, 10, 20);
+  ctx.fillText(`Heliocentric Longitude (Earth): ${heliocentricLongitude.toFixed(1)}°`, 10, 40); // One decimal place
+  ctx.fillText(`Geocentric Longitude (Mars): ${geocentricLongitude.toFixed(1)}°`, 10, 60); // One decimal place
 }
 
 // Calculate the heliocentric longitude of Earth (ensuring it's always positive)
@@ -135,8 +138,8 @@ function drawRayOnBackground(earthPos, marsPos, arrowLength) {
   backgroundCtx.beginPath();
   backgroundCtx.moveTo(earthPos.x, earthPos.y);
   backgroundCtx.lineTo(marsPos.x, marsPos.y); // To Mars
-  backgroundCtx.strokeStyle = 'red';
-  backgroundCtx.lineWidth = 2;
+  backgroundCtx.strokeStyle = 'black';
+  backgroundCtx.lineWidth = 1;
   backgroundCtx.stroke();
 
   // Draw arrowhead
@@ -150,63 +153,90 @@ function drawRayOnBackground(earthPos, marsPos, arrowLength) {
   backgroundCtx.stroke();
 }
 
+let animationFrameId; // Variable to store the animation frame ID
+
 // Animation loop
 function animate() {
-  ctx.clearRect(0, 0, width, height);
-  
-  // Draw the static background first
-  backgroundCtx.drawImage(backgroundCanvas, 0, 0);
-  
-  const earthPos = drawEarth();
-  const marsPos = drawMars();
+  if(!isPaused){
+    ctx.clearRect(0, 0, width, height);
+    
+    // Draw the static background first
+    backgroundCtx.drawImage(backgroundCanvas, 0, 0);
+    
+    const earthPos = drawEarth();
+    const marsPos = drawMars();
 
-  // Draw connecting lines
-  drawConnectingLines(earthPos, marsPos);
+    // Draw connecting lines
+    drawConnectingLines(earthPos, marsPos);
 
-  // Calculate longitudes
-  const heliocentricLongitude = calculateHeliocentricLongitude();
-  const geocentricLongitude = calculateGeocentricLongitude(earthPos, marsPos);
-  
-  // Display all information
-  displayInfo(heliocentricLongitude, geocentricLongitude);
+    // Calculate longitudes
+    const heliocentricLongitude = calculateHeliocentricLongitude();
+    const geocentricLongitude = calculateGeocentricLongitude(earthPos, marsPos);
+    
+    // Display all information
+    displayInfo(heliocentricLongitude, geocentricLongitude);
 
-  // Update Earth's position
-  earthAngle -= earthSpeed;  // Reverse direction for Earth
-  marsAngle -= marsAngularSpeed;  // Reverse direction for Mars
-  
-  // Increment daysCounter if ray has been drawn
-  if (hasDrawnRay && daysCounter < 687) {
-    daysCounter += 1; // Increment the day counter
-  }
+    // Update Earth's position
+    earthAngle -= earthSpeed;  // Reverse direction for Earth
+    marsAngle -= marsAngularSpeed;  // Reverse direction for Mars
+    
+    // Increment daysCounter if ray has been drawn
+    if (hasDrawnRay && daysCounter < 687) {
+      daysCounter += 1; // Increment the day counter
+    }
+    if(experimentBegun){
+      experimentDays += 1;
+    }
 
-  // Check if daysCounter reaches 687 to pause the animation and draw final ray
-  if (daysCounter >= 687) {
-    if (!hasDrawnFinalRay) {
-      drawRayOnBackground(earthPos, marsPos, 20); // Draw the final ray on the background
-      hasDrawnFinalRay = true; // Set the flag to indicate the final ray has been drawn
-      hasDrawnRay = false;
+    // Check if daysCounter reaches 687 to pause the animation and draw final ray
+    if (daysCounter >= 687) {
+      if (!hasDrawnFinalRay) {
+        drawRayOnBackground(earthPos, marsPos, 20); // Draw the final ray on the background
+        hasDrawnFinalRay = true; // Set the flag to indicate the final ray has been drawn
+        hasDrawnRay = false;
+      }
     }
   }
-
-  requestAnimationFrame(animate);
+  animationFrameId  = requestAnimationFrame(animate);
 }
 // Handle space bar for starting the ray
 window.addEventListener('keydown', function (event) {
   if (event.code === 'Space') {
-    if (!hasDrawnRay) {
-      const earthPos = drawEarth();
-      const marsPos = drawMars();
-      drawRayOnBackground(earthPos, marsPos, 20); // Draw the first ray on the background
-      hasDrawnRay = true; // Set the flag to indicate the ray has been drawn
-      hasDrawnFinalRay = false;
+    if(!experimentBegun){
+      experimentBegun = true;
     }
-    if (isPaused) {
-      isPaused = false; // Resume animation if paused
-    }
-    // Start the day counter
-    daysCounter = 0; // Reset days counter when space is pressed
+    drawInitialRay();
   }
 });
+
+function drawInitialRay(){
+  if (!hasDrawnRay) {
+    const earthPos = drawEarth();
+    const marsPos = drawMars();
+    drawRayOnBackground(earthPos, marsPos, 20); // Draw the first ray on the background
+    hasDrawnRay = true; // Set the flag to indicate the ray has been drawn
+    hasDrawnFinalRay = false;
+  }
+  if (isPaused) {
+    isPaused = false; // Resume animation if paused
+  }
+  // Start the day counter
+  daysCounter = 0; // Reset days counter when space is pressed
+}
+
+function stopExperiment() {
+  isPaused = true;  // Pause the animation
+  hasDrawnRay = true;  // Disable the spacebar interaction
+  hasDrawnFinalRay = true;  // Ensure no further final ray is drawn
+  daysCounter = 0;  // Optionally reset the day counter or freeze it
+  ctx.clearRect(0, 0, keplerCanvas.width, keplerCanvas.height);  // Clear the dynamic canvas
+  ctx.fillText("Experiment Stopped", keplerCanvas.width / 2 - 50, keplerCanvas.height / 2);  // Display message
+
+}
+
+document.getElementById('stopButton').addEventListener('click', stopExperiment);
+
+document.getElementById('drawRayButton').addEventListener('click', drawInitialRay);
 
 // Initialize the background canvas
 drawBackground();
