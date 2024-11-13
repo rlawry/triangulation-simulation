@@ -7,13 +7,40 @@
     <link rel="stylesheet" href="main.css">
 </head>
 <body>
-    <canvas id="backgroundCanvas" width="800" height="700"></canvas>
-    <canvas id="keplerCanvas" width="800" height="700"></canvas>
-    <div id="buttonContainer">
-        <button id="drawRayButton">Begin Observation</button>
-        <button id="stopButton">Stop Experiment</button>
-        <button id="drawEllipseBtn">Draw Ellipse</button>
-      </div>
+    <div id="canvas-container">
+        <div id="overlay">
+            <div id="overlay-content">
+            <h1>Kepler's Method of Triangulation</h1>
+            <p style="text-align: center;">From Astronomia Nova, 1609</p>
+            <ul>
+                <li><b><span style="color:aqua">Sidereal Period of Mars:</span></b> 687 Days.  </li>
+                <li>- After 687 days, when Mars returns to its original position around the Sun.</li>
+                <hr>
+                <li><b><span style="color:rgb(255, 85, 255)">Begin Observation:</span></b> Click the button to draw a ray from Earth to Mars</li>
+                <li>- At this moment your experiment will begin.  It's going to be a long experiment.  After 687 days, the final observation will be made automatically.</li>
+                <li>- Where your two observations intersect is a place on the orbit of Mars.</li>
+                <hr>
+                <li><span style="color:yellow"><b>Perform many observations!</b></span> Once you have collected years upon years of observations, pause the experiment and click "Make Conclusion"</li>
+                <hr>
+                <li><span style="color: crimson"><b>Conclude your experiment: </b></span> Use the WASD keys on your keyboard or drag your screen to adjust the shape of your ellipse to make the orbit of Mars.</li>
+                <li>- Compare your results to known values.  How close were you?</li>
+                <hr>
+                <li><b><span style="color:blue;  text-shadow: 0 0 10px #fff, 0 0 20px #fff">Heliocentric Longitude:</b></span>  The angle of Earth around the Sun</li>
+                <li><b><span style="color: red;  text-shadow: 0 0 10px #fff, 0 0 20px #fff">Geocentric Longitude:</b></span>  The angle of Mars around Earth</li>
+                
+            </ul>
+            
+            </div>
+            <button id="beginButton" style="left:50%;">Begin</button>
+        </div>
+        <canvas id="backgroundCanvas" width="800" height="700"></canvas>
+        <canvas id="keplerCanvas" width="800" height="700"></canvas>
+        <div id="buttonContainer">
+            <button id="drawRayButton">Begin Observation</button>
+            <button id="stopButton">Pause Experiment</button>
+            <button id="drawEllipseBtn" style="display: none;">Make Conclusion</button>
+        </div>
+    </div>
     <script src="tools.js"></script>
 </body>
 </html>
