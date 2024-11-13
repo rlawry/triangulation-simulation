@@ -55,7 +55,6 @@ let touchStartX = 0;
 let touchStartY = 0;
 
 function handleTouchMove(event) {
-  if(isEllipseMode){
     if (!isTouching) return;
 
     // Prevent default behavior to avoid scrolling on touch screens
@@ -95,14 +94,16 @@ function handleTouchMove(event) {
     // Update touch start positions
     touchStartX = touch.clientX;
     touchStartY = touch.clientY;
-  }
+  
 }
 
 keplerCanvas.addEventListener('touchstart', (event) => {
-  isTouching = true;
-  const touch = event.touches[0];
-  touchStartX = touch.clientX;
-  touchStartY = touch.clientY;
+  if(isEllipseMode){
+    isTouching = true;
+    const touch = event.touches[0];
+    touchStartX = touch.clientX;
+    touchStartY = touch.clientY;
+  }
 });
 
 keplerCanvas.addEventListener('touchmove', handleTouchMove);
