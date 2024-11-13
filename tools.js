@@ -87,7 +87,7 @@ function handleTouchMove(event) {
     }
 
     // Adjust rx based on eccentricity to simulate a "shift" of the center
-    ellipse.rx = ellipse.ry / Math.sqrt(1 - Math.pow(eccentricity, 2));
+   // ellipse.rx = ellipse.ry / Math.sqrt(1 - Math.pow(eccentricity, 2));
 
     // Redraw ellipse
     drawEllipse();
