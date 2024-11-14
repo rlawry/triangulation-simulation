@@ -140,11 +140,11 @@ function drawBackground() {
   backgroundCtx.stroke();
 
   // Draw Mars' orbit as an ellipse
-  backgroundCtx.beginPath();
-  const marsFocusOffset = marsSemiMajorAxis * marsEccentricity;
-  backgroundCtx.ellipse(sunX - marsFocusOffset, sunY, marsSemiMajorAxis, marsSemiMinorAxis, 0, 0, 2 * Math.PI);
-  backgroundCtx.strokeStyle = 'red';
-  backgroundCtx.stroke();
+  // backgroundCtx.beginPath();
+  // const marsFocusOffset = marsSemiMajorAxis * marsEccentricity;
+  // backgroundCtx.ellipse(sunX - marsFocusOffset, sunY, marsSemiMajorAxis, marsSemiMinorAxis, 0, 0, 2 * Math.PI);
+  // backgroundCtx.strokeStyle = 'red';
+  // backgroundCtx.stroke();
 }
 
 // Calculate Earth's position on its orbit
